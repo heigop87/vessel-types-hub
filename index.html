@@ -187,6 +187,48 @@
   .empty button{background:none;border:0;color:var(--brand);font-weight:600;cursor:pointer;text-decoration:underline;padding:0;font:inherit;font-size:.875rem}
   [hidden]{display:none!important}
 
+  /* pin two or three types and put them side by side */
+  .pin{position:absolute;top:.55rem;right:.55rem;z-index:2;display:flex;align-items:center;gap:.4rem;border:1px solid var(--line-2);background:rgba(255,255,255,.94);color:var(--ink-2);border-radius:999px;padding:.3rem .62rem;font-size:.6875rem;font-weight:600;cursor:pointer;font-family:inherit;line-height:1}
+  .pin::before{content:"";width:.72rem;height:.72rem;border-radius:3px;border:1.5px solid var(--line-2);flex:0 0 auto}
+  .pin:hover{border-color:var(--brand);color:var(--brand)}
+  .pin[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#FFFFFF}
+  .pin[aria-pressed="true"]::before{background:#FFFFFF;border-color:#FFFFFF}
+  .pin.full{opacity:.35;pointer-events:none}
+
+  .drawer{position:fixed;left:50%;transform:translateX(-50%);bottom:1rem;z-index:70;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:center;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:0 2px 6px rgba(34,34,45,.08),0 18px 40px -20px rgba(34,34,45,.45);padding:.55rem .7rem .55rem 1rem;max-width:calc(100vw - 1.5rem)}
+  .drawer .dlab{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .dchips{display:flex;gap:.35rem;flex-wrap:wrap}
+  .dchip{border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:.25rem .55rem;font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit}
+  .dchip span{color:var(--ink-3);margin-left:.2rem}
+  .dchip:hover{border-color:var(--anno);color:var(--anno)}
+  .dbtn{border:0;background:var(--brand);color:#FFFFFF;border-radius:999px;padding:.45rem 1rem;font-size:.8125rem;font-weight:600;cursor:pointer;font-family:inherit}
+  .dbtn:hover{background:var(--brand-2)}
+  .dbtn:disabled{background:var(--surface-2);color:var(--ink-3);cursor:default}
+  .dclear{background:none;border:0;color:var(--ink-3);font-size:.75rem;font-weight:600;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0 .3rem}
+  .dclear:hover{color:var(--brand)}
+
+  .modal{position:fixed;inset:0;z-index:80;background:rgba(34,34,45,.45);display:flex;align-items:center;justify-content:center;padding:1.25rem}
+  .sheet{background:var(--surface);border-radius:14px;box-shadow:0 30px 70px -30px rgba(34,34,45,.6);width:min(60rem,100%);max-height:min(46rem,90vh);display:flex;flex-direction:column;overflow:hidden}
+  .shead{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--line)}
+  .shead h2{margin:0}
+  .shead .sub{margin:0}
+  .sclose{border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:.35rem .85rem;font-size:.8125rem;font-weight:500;cursor:pointer;font-family:inherit}
+  .sclose:hover{border-color:var(--brand);color:var(--brand)}
+  .cmpwrap{overflow:auto;padding:.9rem 1.25rem 1.1rem}
+  .cmp{display:grid;grid-template-columns:7.5rem repeat(var(--n),minmax(0,1fr));gap:0 1rem}
+  /* the row labels stay put while the columns scroll, or the second boat is
+     a column of numbers with nothing naming them */
+  .cmp .rl{position:sticky;left:0;z-index:1;background:var(--surface);font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:.42rem .5rem .42rem 0;border-top:1px solid var(--line);display:flex;align-items:center}
+  .cmp .rc{padding:.42rem 0;border-top:1px solid var(--line);font-size:.8125rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .cmp .rl.nb,.cmp .rc.nb{border-top:0}
+  .cmp .cimg{aspect-ratio:16/9;max-height:7.4rem;background:#FFFFFF;border:1px solid var(--line);border-radius:8px;position:relative;overflow:hidden;margin-bottom:.45rem}
+  .cmp .cimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+  .cmp .cimg span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);opacity:.55}
+  .cmp .cname{font-family:var(--display);font-weight:600;font-size:1rem;margin:0 0 .15rem;color:var(--ink)}
+  .cmp .csum{font-size:.8125rem;color:var(--ink-2);margin:0 0 .2rem}
+  .cmp .cbrowse{display:inline-flex;align-items:center;justify-content:center;gap:.3rem;width:100%;background:var(--brand);color:#FFFFFF;border-radius:999px;padding:.42rem .6rem;font-size:.75rem;font-weight:600;text-decoration:none;margin-top:.15rem}
+  .cmp .cbrowse:hover{background:var(--brand-2)}
+
   .fab{display:none}
 
   @media (max-width:62rem){.cards{grid-template-columns:repeat(2,1fr)}}
@@ -219,6 +261,24 @@
     /* floating filter and sort */
     .fab{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:.5rem;padding:.6rem .75rem;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px -12px rgba(34,34,45,.5)}
     .fab button,.fab select{flex:1;min-width:0;font:inherit;font-size:.8125rem;font-weight:600;border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:.5rem .7rem;cursor:pointer}
+    /* the compare drawer sits above the filter bar rather than under it */
+    .drawer{bottom:4.4rem;border-radius:12px;padding:.6rem .7rem;gap:.45rem}
+    .drawer .dlab{display:none}
+    .modal{padding:0}
+    .sheet{border-radius:0;max-height:100vh;height:100vh;width:100%}
+    /* three columns have to fit at once, so the row label moves onto its own
+       line and gives the whole width back to the boats */
+    .cmpwrap{overflow-x:hidden;padding:.9rem 1rem 1.2rem}
+    .cmp{grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:0 .55rem}
+    .cmp .rl{grid-column:1/-1;position:static;padding:.7rem 0 .2rem}
+    .cmp .rl:empty{display:none}
+    .cmp .rc{border-top:0;padding:.05rem 0 .55rem;font-size:.75rem}
+    .cmp .rc.nb{padding-top:0}
+    .cmp .cimg{max-height:4.5rem}
+    .cmp .cname{font-size:.8125rem}
+    .cmp .csum{font-size:.75rem}
+    .cmp .cbrowse{font-size:.7rem;padding:.42rem .35rem}
+    .bn{display:none}
     .fab button:hover,.fab select:hover{border-color:var(--brand);color:var(--brand)}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -344,6 +404,23 @@
 
   </div>
 
+</div>
+
+<div class="drawer" id="drawer" hidden>
+  <span class="dlab">Comparing</span>
+  <div class="dchips" id="dchips"></div>
+  <button type="button" class="dbtn" id="openCmp">Pick one more</button>
+  <button type="button" class="dclear" id="clearPins">Clear</button>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cmpTitle">
+    <div class="shead">
+      <div><h2 id="cmpTitle">Side by side</h2><p class="sub" style="margin:0">Same figures as the table, one column each</p></div>
+      <button type="button" class="sclose" id="closeCmp">Close</button>
+    </div>
+    <div class="cmpwrap"><div class="cmp" id="cmpBody"></div></div>
+  </div>
 </div>
 
 <div class="fab" id="fab">
@@ -498,7 +575,7 @@ const cardSet = T.filter(LIVE);
 const topSlug = cardSet.reduce((a,b) => (b.count ?? -1) > (a.count ?? -1) ? b : a).slug;
 document.getElementById("cards").innerHTML = cardSet.map(t => `
   <article class="card" data-slug="${t.slug}">
-    <div class="ph${t.img ? " has" : ""}">${t.img ? `<img src="${t.img}" alt="${t.name} on YachtWay">` : ""}${t.slug === topSlug ? `<span class="pop">Most popular</span>` : ""}</div>
+    <div class="ph${t.img ? " has" : ""}">${t.img ? `<img src="${t.img}" alt="${t.name} on YachtWay">` : ""}${t.slug === topSlug ? `<span class="pop">Most popular</span>` : ""}<button type="button" class="pin" aria-pressed="false" data-pin="${t.slug}">Compare</button></div>
     <div class="card-b">
       <h3>${t.name}</h3>
       <p class="sum">${t.sum}</p>
@@ -630,8 +707,20 @@ function bindChips(id, read){
     b.setAttribute("aria-pressed", String(!on));
     read(on ? null : b);
     applyFilter();
+    revealResults();
   });
 }
+/* On a phone the questions fill the screen, so the result of answering one is
+   below the fold and nothing appears to happen. Only scrolls when the cards are
+   genuinely out of view, so it never yanks the page on a desktop. */
+function revealResults(){
+  const cards = document.getElementById("cards");
+  const box = cards.getBoundingClientRect();
+  if (box.top > window.innerHeight - 120) {
+    cards.closest("section").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
 bindChips("acts", b => { act = b ? b.dataset.act : null; });
 bindChips("sleeps", b => { sleep = b ? b.dataset.sleep : null; });
 bindChips("paxs", b => { pax = b ? +b.dataset.pax : null; });
@@ -677,6 +766,87 @@ document.getElementById("cards").addEventListener("click", e => {
   b.setAttribute("aria-pressed", String(!on));
   b.textContent = on ? "Alert me" : "Alert set \u2713";
 });
+
+/* Pinning. The table already puts all sixteen side by side, and answering the
+   questions narrows it to a handful, but neither lets you hold two types that
+   share no answer against each other. Three is the cap: past that the columns
+   stop being readable and the buyer has not actually made a shortlist. */
+const pins = [];
+const CMP_ROWS = [
+  ["In short",       t => t.sum],
+  ["Best for",       t => t.best],
+  ["Defining trait", t => t.trait],
+  ["Sleeps aboard",  t => t.sleep],
+  ["Carries",        t => "up to " + t.pax],
+  ["Typical length", t => `${t.lo}\u2013${t.hi} ft`],
+  ["From",           t => fmtK(t.price)],
+  ["Listings",       t => t.count ?? "\u2014"]
+];
+
+function renderPins(){
+  document.querySelectorAll(".pin").forEach(b => {
+    const on = pins.includes(b.dataset.pin);
+    b.setAttribute("aria-pressed", String(on));
+    b.classList.toggle("full", !on && pins.length >= 3);
+  });
+  const drawer = document.getElementById("drawer");
+  drawer.hidden = pins.length === 0;
+  document.getElementById("dchips").innerHTML = pins.map(sl => {
+    const t = T.find(x => x.slug === sl);
+    return `<button type="button" class="dchip" data-unpin="${sl}">${t.name} <span>\u00d7</span></button>`;
+  }).join("");
+  const btn = document.getElementById("openCmp");
+  btn.disabled = pins.length < 2;
+  btn.textContent = pins.length < 2 ? "Pick one more" : `Compare ${pins.length} types`;
+}
+
+function togglePin(slug){
+  const i = pins.indexOf(slug);
+  if (i > -1) pins.splice(i, 1);
+  else if (pins.length < 3) pins.push(slug);
+  renderPins();
+}
+
+document.getElementById("cards").addEventListener("click", e => {
+  const b = e.target.closest(".pin"); if (!b) return;
+  togglePin(b.dataset.pin);
+});
+document.getElementById("dchips").addEventListener("click", e => {
+  const b = e.target.closest("[data-unpin]"); if (!b) return;
+  togglePin(b.dataset.unpin);
+});
+document.getElementById("clearPins").addEventListener("click", () => {
+  pins.length = 0; renderPins();
+});
+
+function openCompare(){
+  const set = pins.map(sl => T.find(x => x.slug === sl));
+  const body = document.getElementById("cmpBody");
+  body.style.setProperty("--n", set.length);
+  let html = `<div class="rl nb"></div>` + set.map(t => `
+    <div class="rc nb">
+      <div class="cimg">${t.img ? `<img src="${t.img}" alt="${t.name}">` : `<span>no render yet</span>`}</div>
+      <p class="cname">${t.name}</p>
+    </div>`).join("");
+  CMP_ROWS.forEach(([label, get]) => {
+    html += `<div class="rl">${label}</div>` + set.map(t => `<div class="rc">${get(t)}</div>`).join("");
+  });
+  html += `<div class="rl"></div>` + set.map(t => `<div class="rc"><a class="cbrowse" href="#">Browse <span class="bn">${t.name} </span>\u2192</a></div>`).join("");
+  body.innerHTML = html;
+  document.getElementById("modal").hidden = false;
+  document.getElementById("closeCmp").focus();
+}
+function closeCompare(){ document.getElementById("modal").hidden = true; }
+
+document.getElementById("openCmp").addEventListener("click", openCompare);
+document.getElementById("closeCmp").addEventListener("click", closeCompare);
+document.getElementById("modal").addEventListener("click", e => {
+  if (e.target.id === "modal") closeCompare();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !document.getElementById("modal").hidden) closeCompare();
+});
+renderPins();
 
 /* mobile: one floating control, filter and sort */
 document.getElementById("fabFilter").addEventListener("click", () => {
