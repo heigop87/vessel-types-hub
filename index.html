@@ -10,28 +10,74 @@
 <title>Types of Yachts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
 <style>
+  /* ---------------------------------------------------------------------------
+     Tokens from @yachtway/ui (yachtway/yachtway-ui). That package is React +
+     Tailwind on private GitHub Packages, so a single self-contained file cannot
+     import it; the values are ported here instead, each block naming the file
+     it came from so the two can be diffed. Nothing below invents a colour.
+     --------------------------------------------------------------------------- */
+
   :root {
-    --ground:#FFFFFF; --surface:#FFFFFF; --surface-2:#F7F8FA;
-    --line:#E4E1EA; --line-2:#DCDCDE;
-    --ink:#22222D; --ink-2:#56545F; --ink-3:#8A8792;
-    --brand:#4B0EA3; --brand-2:#6430B0; --brand-soft:#FAF6FE; --brand-line:#E6DCF4;
-    --bar:#4B0EA3; --bar-2:#8B62D6;
-    --gold:#B27512; --gold-soft:#FCF4E3;
-    --good:#14804A; --good-soft:#E4F3EB;
-    --anno:#C2410C; --anno-soft:#FEF0E7;
-    --shadow:0 1px 2px rgba(34,34,45,.06), 0 12px 32px -22px rgba(34,34,45,.35);
+    /* styles/colors.css — the flat palette */
+    --n-base-white:#ffffff;
+    --n-brand-10:#fcfafe;  --n-brand-25:#faf6fe;  --n-brand-50:#f3edfb;
+    --n-brand-100:#e6dcf4; --n-brand-200:#ccb9e7; --n-brand-300:#b297d9;
+    --n-brand-600:#6430b0; --n-brand-700:#4b0ea3;
+    --n-gray-10:#f9fafb;  --n-gray-25:#f6f6f7;  --n-gray-50:#f1f1f2;
+    --n-gray-100:#dcdcde; --n-gray-200:#c1c1c4; --n-gray-300:#a6a6ab;
+    --n-gray-400:#8c8c92; --n-gray-500:#727279; --n-gray-600:#575760;
+    --n-gray-900:#22222d;
+    --n-secondary-success-50:#ecfdf3; --n-secondary-success-600:#039855;
+    --n-secondary-warning-50:#fffaeb; --n-secondary-warning-700:#b54708;
+    --n-secondary-error-600:#d92d20;
+    --n-alpha-black-10:rgba(34,34,34,.1);
+
+    /* styles/roles.css — what the shadcn components are written against */
+    --background:#fafafa;
+    --card:var(--n-base-white);
+    --foreground:var(--n-gray-900);
+    --muted:var(--n-gray-50);
+    --muted-foreground:var(--n-gray-600);
+    --primary:var(--n-brand-700);
+    --primary-foreground:var(--n-base-white);
+    --accent:var(--n-brand-50);
+    --border:#e5e5e5;
+
+    /* styles/base.css — one radius, four steps off it */
+    --radius:.9rem;
+    --radius-sm:calc(var(--radius) - 4px);
+    --radius-md:calc(var(--radius) - 2px);
+    --radius-lg:var(--radius);
+
+    /* styles/typography.css — Poppins headlines, Figtree text, both weight 400 */
+    --font-poppins:"Poppins",ui-sans-serif,system-ui,sans-serif;
+    --font-figtree:"Figtree",ui-sans-serif,system-ui,sans-serif;
+
+    /* This file's own names, resolved onto the tokens above rather than to hex,
+       so a palette change upstream lands here by editing one block. */
+    --ground:var(--background); --surface:var(--card); --surface-2:var(--muted);
+    --line:var(--border); --line-2:var(--n-gray-100);
+    --ink:var(--foreground); --ink-2:var(--muted-foreground); --ink-3:var(--n-gray-400);
+    --brand:var(--primary); --brand-2:var(--n-brand-600);
+    --brand-soft:var(--n-brand-25); --brand-line:var(--n-brand-100);
+    --bar:var(--primary); --bar-2:var(--n-brand-300);
+    --gold:var(--n-secondary-warning-700); --gold-soft:var(--n-secondary-warning-50);
+    --good:var(--n-secondary-success-600); --good-soft:var(--n-secondary-success-50);
+    --anno:var(--n-secondary-error-600); --anno-soft:#fef3f2;
+    --shadow:0 1px 2px var(--n-alpha-black-10), 0 12px 32px -22px rgba(34,34,45,.35);
     --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
-    --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
-    --display:"Poppins",ui-sans-serif,system-ui,sans-serif;
+    --body:var(--font-figtree);
+    --display:var(--font-poppins);
   }
 
-  /* Single-theme light. The site this mocks is light-only, so every colour is
-     painted explicitly and no dark override is defined. */
+  /* Single-theme light. roles.css carries a .dark block; the site this mocks is
+     light-only, so it is deliberately not ported. */
 
   *{box-sizing:border-box}
-  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  /* type-text-md */
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:24px;-webkit-font-smoothing:antialiased}
   button{font:inherit}
   :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
 
@@ -42,34 +88,44 @@
   .toggle:hover{border-color:var(--brand);color:var(--brand)}
 
   .page{max-width:74rem;margin:1.75rem auto 4rem;padding:0 1.25rem}
-  .frame{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:1.75rem}
+  .frame{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:1.75rem}
 
 
   section{margin-bottom:2.9rem}
   section:last-child{margin-bottom:0}
 
+  .hero .eyebrow{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:1.6rem 0 .6rem}
   .crumb{font-size:.8125rem;color:var(--ink-3);margin:0 0 1rem}
   .crumb span{color:var(--ink-2)}
-  h1{font-family:var(--display);font-weight:600;font-size:2.1rem;line-height:1.15;letter-spacing:-.02em;margin:0 0 .5rem;text-wrap:balance}
-  .subline{margin:0 0 1rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
-  .subline strong{color:var(--ink);font-weight:600}
+  /* type-headlines-lg, stepping to -xl at the 1024 breakpoint. Weight 400 is
+     what the scale specifies; the 600 this page used before was not from it. */
+  h1{font-family:var(--display);font-weight:400;font-size:32px;line-height:40px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+  @media (min-width:64rem){ h1{font-size:40px;line-height:48px} }
+  /* the count is the only thing above the fold that has to be read */
+  .deck{margin:.55rem 0 0;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .deck strong{color:var(--ink);font-weight:600}
   .intro{max-width:66ch;color:var(--ink-2);margin:0}
   .intro strong{color:var(--ink);font-weight:600}
 
-  h2{font-family:var(--display);font-weight:600;font-size:1.25rem;letter-spacing:-.015em;margin:0 0 .2rem;text-wrap:balance}
+  /* type-headlines-xs */
+  h2{font-family:var(--display);font-weight:400;font-size:20px;line-height:28px;letter-spacing:-.015em;margin:0 0 .2rem;text-wrap:balance}
   .sub{margin:0 0 1.1rem;font-size:.8125rem;color:var(--ink-3)}
 
+  /* Two tiles carry the fold. A render says power or sail faster than a
+     sentence does, so the copy here is a name and two figures and nothing else. */
   .parents{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-  .parent{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:inherit;overflow:hidden}
-  .parent:hover{border-color:var(--brand-line);background:var(--brand-soft)}
-  .parent h3{font-family:var(--display);font-weight:600;font-size:1.05rem;margin:0 0 .2rem}
+  .parent{border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--surface);color:inherit;overflow:hidden}
+  .parent:hover{border-color:var(--brand-line)}
+  .ptoggle{display:block;width:100%;text-align:left;background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:0}
+  .ptile{display:block;aspect-ratio:16/7;background:var(--surface-2) center/cover no-repeat;border-bottom:1px solid var(--line)}
+  .pbody{display:flex;align-items:baseline;gap:.6rem;padding:.85rem 1.1rem .35rem}
+  /* type-headlines-2xs */
+  .pname{font-family:var(--display);font-weight:400;font-size:18px;line-height:28px;color:var(--ink)}
+  .pname::after{content:"";display:inline-block;width:.7rem;height:.7rem;margin-left:.5rem;border-radius:50%;border:1.5px solid var(--line-2);vertical-align:-1px}
   .parent .n{font-size:.8125rem;color:var(--ink-2);font-variant-numeric:tabular-nums;margin:0}
-  /* the card narrows the page, the link inside it opens the full catalog */
-  .ptoggle{display:block;width:100%;text-align:left;background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:1.1rem 1.2rem .6rem}
-  .ptoggle h3::after{content:"";display:inline-block;width:.7rem;height:.7rem;margin-left:.45rem;border-radius:50%;border:1.5px solid var(--line-2);vertical-align:-1px}
-  .parent.on{border-color:var(--brand);background:var(--brand-soft);box-shadow:inset 0 0 0 1px var(--brand)}
-  .parent.on .ptoggle h3::after{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 2px #FFFFFF}
-  .plink{display:inline-block;padding:0 1.2rem 1rem;font-size:.8125rem;font-weight:600;color:var(--brand);text-decoration:none}
+  .parent.on{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+  .parent.on .pname::after{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 2px var(--n-base-white)}
+  .plink{display:inline-block;padding:0 1.1rem 1rem;font-size:.8125rem;font-weight:600;color:var(--brand);text-decoration:none}
   .plink:hover{text-decoration:underline}
   /* once a family is chosen the other one is gone, not greyed. Its label goes
      with it, because with a single row left the label is saying what the
@@ -78,7 +134,7 @@
   #acts.single .chipgroup{grid-template-columns:1fr}
   #acts.single .gl{display:none}
 
-  .narrow{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:1.25rem 1.35rem}
+  .narrow{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:1.25rem 1.35rem}
   .flabel{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 .55rem}
   .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.1rem}
   .chip{border:1px solid var(--line-2);background:var(--surface);color:var(--ink);border-radius:999px;padding:.42rem .85rem;font-size:.8125rem;cursor:pointer}
@@ -89,7 +145,7 @@
   .clear{background:none;border:0;color:var(--brand);font-size:.8125rem;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
 
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-  .card{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;transition:opacity .15s}
+  .card{border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;background:var(--surface);display:flex;flex-direction:column;transition:opacity .15s}
   .card:hover{border-color:var(--brand-line)}
   .card.dim,.lrow.dim,.lgroup.dim,tbody tr.dim{display:none}
   .ph{aspect-ratio:16/9;background:linear-gradient(135deg,var(--surface-2) 0%,var(--brand-soft) 100%);position:relative}
@@ -107,7 +163,7 @@
   .card-b .facts b{color:var(--ink);font-weight:600}
   .card-b .facts i{font-style:normal;color:var(--ink-3)}
 
-  .ladder{border:1px solid var(--line);border-radius:10px;padding:1.2rem 1.35rem;background:var(--surface-2)}
+  .ladder{border:1px solid var(--line);border-radius:var(--radius-lg);padding:1.2rem 1.35rem;background:var(--surface-2)}
   .lrow{display:grid;grid-template-columns:10rem 1fr;gap:.7rem;align-items:center;padding:.16rem 0;border-radius:4px}
   .lrow:hover{background:var(--brand-soft)}
   .lrow .nm{font-size:.8125rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -123,7 +179,7 @@
   .tick{position:absolute;top:.2rem;font-size:.6875rem;color:var(--ink-3);transform:translateX(-50%);font-variant-numeric:tabular-nums}
 
   .tbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.9rem}
-  .twrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+  .twrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-lg)}
   table{width:100%;border-collapse:collapse;font-size:.875rem;min-width:62rem}
   th,td{text-align:left;padding:.7rem .85rem;border-bottom:1px solid var(--line)}
   thead th{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--surface-2);position:sticky;top:0;cursor:pointer;white-space:nowrap;user-select:none}
@@ -233,8 +289,17 @@
 
   @media (max-width:62rem){.cards{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:40rem){
-    .cards,.parents{grid-template-columns:1fr}
-    h1{font-size:1.6rem}.frame{padding:1.1rem}
+    .cards{grid-template-columns:1fr}
+    /* side by side even here: stacked, the sail tile falls below the fold and
+       the choice stops looking like a choice */
+    .parents{gap:.6rem}
+    .ptile{aspect-ratio:4/3}
+    .pbody{display:block;padding:.6rem .7rem .2rem}
+    .pname{font-size:16px;line-height:24px}
+    .parent .n{font-size:.75rem}
+    .plink{padding:0 .7rem .7rem;font-size:.75rem}
+    /* h1 keeps type-headlines-lg here; the scale already sets the mobile step */
+    .frame{padding:1.1rem}
     .chipgroup{grid-template-columns:1fr;gap:.2rem;margin-bottom:.7rem}
     .chipgroup .gl{padding-top:0}
     .page{padding:0 .75rem}
@@ -290,23 +355,24 @@
 <div class="page">
 <div class="frame">
 
-  <section>
+  <section class="hero">
     <p class="crumb">Yachts for Sale &nbsp;›&nbsp; <span>Vessel Types</span></p>
     <h1>Types of Yachts</h1>
-    <p class="subline"><strong>3,866</strong> listings across <strong>16</strong> types</p>
-    <p class="intro">Boat types are not a clean taxonomy. Some describe the layout, some the purpose, and some the size, which is why the same 43-foot boat can honestly be called a walkaround, a day boat, and a center console. <strong>What follows sorts them by the decision you are actually making:</strong> how you will use the boat, how big it needs to be, and what you want to spend.</p>
-  </section>
-
-  <section>
-    <h2>Start broad</h2>
-    <p class="sub">Pick one to narrow this page, or open the full catalog</p>
+    <p class="deck"><strong>3,866</strong> listings across <strong>16</strong> types</p>
+    <p class="eyebrow">Start broad — pick one to narrow this page</p>
     <div class="parents" id="parents">
       <div class="parent" data-cat="Power">
-        <button type="button" class="ptoggle" aria-pressed="false"><h3>Motor Yachts</h3><p class="n">3,315 listings · 12 types · from $10,000</p></button>
+        <button type="button" class="ptoggle" aria-pressed="false">
+          <span class="ptile" data-img="flybridge"></span>
+          <span class="pbody"><span class="pname">Motor Yachts</span><span class="n">3,315 · 12 types</span></span>
+        </button>
         <a class="plink" href="#">Browse all 3,315 motor yachts &rarr;</a>
       </div>
       <div class="parent" data-cat="Sail">
-        <button type="button" class="ptoggle" aria-pressed="false"><h3>Sailing Yachts</h3><p class="n">551 listings · 4 types · from $10,000</p></button>
+        <button type="button" class="ptoggle" aria-pressed="false">
+          <span class="ptile" data-img="catamaran"></span>
+          <span class="pbody"><span class="pname">Sailing Yachts</span><span class="n">551 · 4 types</span></span>
+        </button>
         <a class="plink" href="#">Browse all 551 sailing yachts &rarr;</a>
       </div>
     </div>
@@ -363,7 +429,7 @@
   <section>
     <div>
       <h2>All types</h2>
-      <p class="sub">A listing can belong to more than one type, so the counts below do not sum to 3,866</p>
+      <p class="sub">Some names describe the layout, some the purpose, some the size \u2014 the same 43-foot boat can be a walkaround, a day boat and a center console. A listing can belong to more than one type, so the counts below do not sum to 3,866.</p>
       <div class="cards" id="cards"></div>
       <p class="empty" id="none" hidden><b>Nothing fits all of that</b>No type in the catalog matches every answer at once. <button type="button" id="clear2">Start again</button></p>
     </div>
@@ -757,6 +823,13 @@ document.getElementById("clear").addEventListener("click", () => {
 });
 
 drawTable(); drawLadder();
+
+/* The two tiles are filled from the same base64 the cards use, looked up at
+   runtime, so the fold gets a picture without the file carrying it twice. */
+document.querySelectorAll("[data-img]").forEach(el => {
+  const t = T.find(x => x.slug === el.dataset.img);
+  if (t && t.img) el.style.backgroundImage = `url("${t.img}")`;
+});
 
 /* second card CTA: an alert costs the buyer nothing and gives the type page a
    reason to exist for someone who is not ready to browse today */
