@@ -117,7 +117,8 @@
   .parent{border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--surface);color:inherit;overflow:hidden}
   .parent:hover{border-color:var(--brand-line)}
   .ptoggle{display:block;width:100%;text-align:left;background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:0}
-  .ptile{display:block;aspect-ratio:16/7;background:var(--surface-2) center/cover no-repeat;border-bottom:1px solid var(--line)}
+  /* contain on white, never cover: the spec forbids cropping a hull */
+  .ptile{display:block;aspect-ratio:16/7;background:var(--n-base-white) center/contain no-repeat;border-bottom:1px solid var(--line)}
   .pbody{display:flex;align-items:baseline;gap:.6rem;padding:.85rem 1.1rem .35rem}
   /* type-headlines-2xs */
   .pname{font-family:var(--display);font-weight:400;font-size:18px;line-height:28px;color:var(--ink)}
@@ -293,7 +294,7 @@
     /* side by side even here: stacked, the sail tile falls below the fold and
        the choice stops looking like a choice */
     .parents{gap:.6rem}
-    .ptile{aspect-ratio:4/3}
+    .ptile{aspect-ratio:4/3;background-size:contain}
     .pbody{display:block;padding:.6rem .7rem .2rem}
     .pname{font-size:16px;line-height:24px}
     .parent .n{font-size:.75rem}
