@@ -306,7 +306,7 @@
      and then the buyer wants the boats, so the union of the pinned types is
      one click rather than three separate browses. */
   .sfoot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.9rem 1.25rem;border-top:1px solid var(--line);background:var(--surface-2)}
-  .sall{display:inline-flex;align-items:center;gap:.4rem;background:var(--brand);color:var(--n-base-white);border-radius:999px;padding:.55rem 1.1rem;font-size:.875rem;font-weight:600;text-decoration:none;white-space:nowrap}
+  .sall{border:0;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;background:var(--brand);color:var(--n-base-white);border-radius:999px;padding:.55rem 1.1rem;font-size:.875rem;font-weight:600;text-decoration:none;white-space:nowrap}
   .sall:hover{background:var(--brand-2)}
   .snote{margin:0;font-size:.75rem;line-height:1.45;color:var(--ink-3);max-width:46ch}
   /* a field that is meant to come from inventory and has not been wired yet
@@ -1020,15 +1020,20 @@ function drawCmpFoot(set){
   const priced = set.filter(t => t.count != null);
   const ceiling = priced.reduce((n, t) => n + t.count, 0);
   const missing = set.length - priced.length;
-  /* A multi-type browse is a filter combination, so the real URL is
-     noindex,follow by the crawl rules and never a canonical destination. */
-  const href = "/boats-for-sale/?type=" + set.map(t => t.slug).join(",");
+  /* Two Master Plan rules land on this control and both said the first
+     version was wrong. Filter combinations are never rendered as crawlable
+     anchors — they are applied through client state so there is no link trail
+     for Googlebot and no crawl budget spent on combinations. And the
+     boats/yachts split exists only at pillar level at 38 ft, so a multi-type
+     browse of flybridges does not belong under /boats-for-sale/. It is a
+     button that carries state, not a link. */
+  const target = set.map(t => t.slug).join(",");
   const note = priced.length === 0
     ? `${nameList(set)} are not built yet, so there is nothing to browse together.`
     : `Up to ${ceiling.toLocaleString()} listings across ${nameList(priced)}. A boat that is more than one of these is counted once in the catalog, so the real number is lower.`
       + (missing ? ` ${missing === 1 ? "One type has" : missing + " types have"} no inventory yet and ${missing === 1 ? "is" : "are"} left out.` : "");
   document.getElementById("cmpFoot").innerHTML =
-    (priced.length ? `<a class="sall" href="${href}">See all boats for sale in these ${set.length} types <span>\u2192</span></a>` : "")
+    (priced.length ? `<button type="button" class="sall" data-types="${target}">See all boats for sale in these ${set.length} types <span>\u2192</span></button>` : "")
     + `<p class="snote">${note}</p>`;
 }
 
