@@ -292,6 +292,9 @@
   .sall{display:inline-flex;align-items:center;gap:.4rem;background:var(--brand);color:var(--n-base-white);border-radius:999px;padding:.55rem 1.1rem;font-size:.875rem;font-weight:600;text-decoration:none;white-space:nowrap}
   .sall:hover{background:var(--brand-2)}
   .snote{margin:0;font-size:.75rem;line-height:1.45;color:var(--ink-3);max-width:46ch}
+  /* a field that is meant to come from inventory and has not been wired yet
+     should look unfinished, not look like a measurement */
+  .unbound{font-family:var(--mono);font-size:.5625rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);border:1px dashed var(--line-2);border-radius:4px;padding:.1rem .3rem;white-space:nowrap}
 
   .fab{display:none}
 
@@ -857,12 +860,33 @@ document.getElementById("cards").addEventListener("click", e => {
    share no answer against each other. Three is the cap: past that the columns
    stop being readable and the buyer has not actually made a shortlist. */
 const pins = [];
+/* --------------------------------------------------------------------------
+   Averages over the live listings of each type. These are the only figures on
+   the page that are computed rather than written, so they live apart from T
+   and each one is null until it is bound to the query that produces it.
+
+   Rendering "from inventory" rather than a plausible number is deliberate: a
+   wrong average here is worse than a blank one, and the design lane already
+   rejects a type-level range figure for exactly that reason. Speed may fall
+   under the same objection — cruise and top speed are engine-specific, and two
+   flybridges of the same length can differ by fifteen knots — so these two rows
+   may need an n= and a spread rather than a single mean.
+   -------------------------------------------------------------------------- */
+const MEASURED = {};   /* {slug: {cabins, cruise, top, n}} */
+const avg = (t, k, unit) => {
+  const m = MEASURED[t.slug], v = m && m[k];
+  return v == null ? `<span class="unbound">from inventory</span>` : `${v}${unit}`;
+};
+
 const CMP_ROWS = [
   ["In short",       t => t.sum],
   ["Best for",       t => t.best],
   ["Defining trait", t => t.trait],
   ["Sleeps aboard",  t => t.sleep],
   ["Carries",        t => "up to " + t.pax],
+  ["Cabins, average",      t => avg(t, "cabins", "")],
+  ["Cruise speed, average", t => avg(t, "cruise", " kn")],
+  ["Top speed, average",    t => avg(t, "top", " kn")],
   ["Typical length", t => `${t.lo}\u2013${t.hi} ft`],
   ["From",           t => fmtK(t.price)],
   ["Listings",       t => t.count ?? "\u2014"]
@@ -939,13 +963,14 @@ function drawCmpFoot(set){
   /* A multi-type browse is a filter combination, so the real URL is
      noindex,follow by the crawl rules and never a canonical destination. */
   const href = "/boats-for-sale/?type=" + set.map(t => t.slug).join(",");
+  const unbound = set.some(t => !MEASURED[t.slug]);
   const note = priced.length === 0
     ? `${nameList(set)} are not built yet, so there is nothing to browse together.`
     : `Up to ${ceiling.toLocaleString()} listings across ${nameList(priced)}. A boat that is more than one of these is counted once in the catalog, so the real number is lower.`
       + (missing ? ` ${missing === 1 ? "One type has" : missing + " types have"} no inventory yet and ${missing === 1 ? "is" : "are"} left out.` : "");
   document.getElementById("cmpFoot").innerHTML =
     (priced.length ? `<a class="sall" href="${href}">See all boats for sale in these ${set.length} types <span>\u2192</span></a>` : "")
-    + `<p class="snote">${note}</p>`;
+    + `<p class="snote">${note}${unbound ? " Cabins and speeds are averages over live listings and are not wired to inventory in this prototype." : ""}</p>`;
 }
 
 function closeCompare(){ document.getElementById("modal").hidden = true; }
