@@ -285,6 +285,13 @@
   .cmp .csum{font-size:.8125rem;color:var(--ink-2);margin:0 0 .2rem}
   .cmp .cbrowse{display:inline-flex;align-items:center;justify-content:center;gap:.3rem;width:100%;background:var(--brand);color:#FFFFFF;border-radius:999px;padding:.42rem .6rem;font-size:.75rem;font-weight:600;text-decoration:none;margin-top:.15rem}
   .cmp .cbrowse:hover{background:var(--brand-2)}
+  /* Comparing is not the end of the job. Three columns answer "which type",
+     and then the buyer wants the boats, so the union of the pinned types is
+     one click rather than three separate browses. */
+  .sfoot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.9rem 1.25rem;border-top:1px solid var(--line);background:var(--surface-2)}
+  .sall{display:inline-flex;align-items:center;gap:.4rem;background:var(--brand);color:var(--n-base-white);border-radius:999px;padding:.55rem 1.1rem;font-size:.875rem;font-weight:600;text-decoration:none;white-space:nowrap}
+  .sall:hover{background:var(--brand-2)}
+  .snote{margin:0;font-size:.75rem;line-height:1.45;color:var(--ink-3);max-width:46ch}
 
   .fab{display:none}
 
@@ -344,6 +351,9 @@
     .cmp .cname{font-size:.8125rem}
     .cmp .csum{font-size:.75rem}
     .cmp .cbrowse{font-size:.7rem;padding:.42rem .35rem}
+    .sfoot{flex-direction:column;align-items:stretch;gap:.5rem;padding:.8rem 1rem}
+    .sall{justify-content:center}
+    .snote{max-width:none}
     .bn{display:none}
     .fab button:hover,.fab select:hover{border-color:var(--brand);color:var(--brand)}
   }
@@ -487,6 +497,7 @@
       <button type="button" class="sclose" id="closeCmp">Close</button>
     </div>
     <div class="cmpwrap"><div class="cmp" id="cmpBody"></div></div>
+    <div class="sfoot" id="cmpFoot"></div>
   </div>
 </div>
 
@@ -907,9 +918,36 @@ function openCompare(){
   });
   html += `<div class="rl"></div>` + set.map(t => `<div class="rc"><a class="cbrowse" href="#">Browse <span class="bn">${t.name} </span>\u2192</a></div>`).join("");
   body.innerHTML = html;
+  drawCmpFoot(set);
   document.getElementById("modal").hidden = false;
   document.getElementById("closeCmp").focus();
 }
+/* "and 3 more" reads worse than a written list at these lengths */
+function nameList(set){
+  const n = set.map(t => t.name);
+  return n.length < 2 ? n[0] : n.slice(0, -1).join(", ") + " and " + n[n.length - 1];
+}
+
+/* The counts on this page deliberately do not sum: a hull can carry more than
+   one type, so a boat that is both a walkaround and a center console appears in
+   both columns and once in the catalog. Adding the columns therefore gives a
+   ceiling, not a total, and the button says so rather than quietly overstating. */
+function drawCmpFoot(set){
+  const priced = set.filter(t => t.count != null);
+  const ceiling = priced.reduce((n, t) => n + t.count, 0);
+  const missing = set.length - priced.length;
+  /* A multi-type browse is a filter combination, so the real URL is
+     noindex,follow by the crawl rules and never a canonical destination. */
+  const href = "/boats-for-sale/?type=" + set.map(t => t.slug).join(",");
+  const note = priced.length === 0
+    ? `${nameList(set)} are not built yet, so there is nothing to browse together.`
+    : `Up to ${ceiling.toLocaleString()} listings across ${nameList(priced)}. A boat that is more than one of these is counted once in the catalog, so the real number is lower.`
+      + (missing ? ` ${missing === 1 ? "One type has" : missing + " types have"} no inventory yet and ${missing === 1 ? "is" : "are"} left out.` : "");
+  document.getElementById("cmpFoot").innerHTML =
+    (priced.length ? `<a class="sall" href="${href}">See all boats for sale in these ${set.length} types <span>\u2192</span></a>` : "")
+    + `<p class="snote">${note}</p>`;
+}
+
 function closeCompare(){ document.getElementById("modal").hidden = true; }
 
 document.getElementById("openCmp").addEventListener("click", openCompare);
