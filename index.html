@@ -101,6 +101,8 @@
   .hero .eyebrow{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:1.6rem 0 .6rem}
   .crumb{font-size:.8125rem;color:var(--ink-3);margin:0 0 1rem}
   .crumb span{color:var(--ink-2)}
+.crumb a{color:inherit;text-decoration:none}
+.crumb a:hover{color:var(--brand);text-decoration:underline}
   /* type-headlines-lg, stepping to -xl at the 1024 breakpoint. Weight 400 is
      what the scale specifies; the 600 this page used before was not from it. */
   h1{font-family:var(--display);font-weight:400;font-size:32px;line-height:40px;letter-spacing:-.02em;margin:0;text-wrap:balance}
@@ -394,7 +396,7 @@
 <div class="frame">
 
   <section class="hero">
-    <p class="crumb">Yachts for Sale &nbsp;›&nbsp; <span>Vessel Types</span></p>
+    <p class="crumb"><a href="/">Home</a> &nbsp;›&nbsp; <span>Vessel Types</span></p>
     <h1>Types of Yachts</h1>
     <p class="deck"><strong>3,866</strong> listings across <strong id="typeCount">16</strong> types</p>
     <p class="lede">Type names overlap: the same 43-foot boat is honestly a walkaround, a day boat and a center console. This page sorts them by the decision you are making \u2014 how you will use the boat, how big it needs to be, and what it costs.</p>
