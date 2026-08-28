@@ -87,13 +87,17 @@
   .toggle{border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:.35rem .85rem;font-size:.8125rem;font-weight:500;cursor:pointer}
   .toggle:hover{border-color:var(--brand);color:var(--brand)}
 
-  .page{max-width:74rem;margin:1.75rem auto 4rem;padding:0 1.25rem}
-  .frame{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:1.75rem}
+  /* The frame was a prototype tell: a bordered card floating on a page said
+     "mock", and it capped the layout at a reading measure the catalog does not
+     want. The page is the page now, and the width is spent on the work. */
+  .page{max-width:96rem;margin:0 auto 5rem;padding:0 2rem}
+  .frame{background:none;border:0;border-radius:0;box-shadow:none;padding:0}
 
 
-  section{margin-bottom:2.9rem}
+  section{margin-bottom:3.4rem}
   section:last-child{margin-bottom:0}
 
+  .hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);margin:1.5rem 0 3.4rem;padding:1.6rem 1.75rem 1.9rem}
   .hero .eyebrow{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:1.6rem 0 .6rem}
   .crumb{font-size:.8125rem;color:var(--ink-3);margin:0 0 1rem}
   .crumb span{color:var(--ink-2)}
@@ -135,6 +139,15 @@
   #acts.single .chipgroup{grid-template-columns:1fr}
   #acts.single .gl{display:none}
 
+  /* Two columns from 64rem: the four questions stay on screen while the buyer
+     scans the types they change. DOM order is unchanged, so narrow viewports
+     stack exactly as before and the questions still come first. */
+  .work{display:grid;gap:1.75rem}
+  @media (min-width:64rem){
+    .work{grid-template-columns:20rem minmax(0,1fr);align-items:start}
+    .rail{position:sticky;top:1.5rem;margin:0;max-height:calc(100vh - 3rem);overflow:auto}
+    .results{margin:0}
+  }
   .narrow{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:1.25rem 1.35rem}
   .flabel{font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 .55rem}
   .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.1rem}
@@ -145,7 +158,7 @@
   .result b{color:var(--ink);font-variant-numeric:tabular-nums}
   .clear{background:none;border:0;color:var(--brand);font-size:.8125rem;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
 
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(16.5rem,1fr));gap:1rem}
   .card{border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;background:var(--surface);display:flex;flex-direction:column;transition:opacity .15s}
   .card:hover{border-color:var(--brand-line)}
   .card.dim,.lrow.dim,.lgroup.dim,tbody tr.dim{display:none}
@@ -298,7 +311,7 @@
 
   .fab{display:none}
 
-  @media (max-width:62rem){.cards{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:62rem){.cards{grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))}}
   @media (max-width:40rem){
     .cards{grid-template-columns:1fr}
     /* side by side even here: stacked, the sail tile falls below the fold and
@@ -314,6 +327,7 @@
     .chipgroup{grid-template-columns:1fr;gap:.2rem;margin-bottom:.7rem}
     .chipgroup .gl{padding-top:0}
     .page{padding:0 .75rem}
+    .hero{margin:.75rem 0 2rem;padding:1.1rem 1rem 1.4rem}
     body{padding-bottom:4.5rem}
 
     /* ladder: name on its own line, track full width beneath it */
@@ -392,7 +406,8 @@
     </div>
   </section>
 
-  <section>
+  <div class="work">
+  <section class="rail">
     <div class="narrow">
       <p class="flabel"><i>1</i> What will you use it for</p>
       <div id="acts">
@@ -440,7 +455,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="results">
     <div>
       <h2>All types</h2>
       <p class="sub">Some names describe the layout, some the purpose, some the size \u2014 the same 43-foot boat can be a walkaround, a day boat and a center console. A listing can belong to more than one type, so the counts below do not sum to 3,866.</p>
@@ -448,6 +463,7 @@
       <p class="empty" id="none" hidden><b>Nothing fits all of that</b>No type in the catalog matches every answer at once. <button type="button" id="clear2">Start again</button></p>
     </div>
   </section>
+  </div>
 
   <section id="secLadder">
     <div>
