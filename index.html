@@ -653,7 +653,7 @@ const cardSet = T.filter(LIVE);
 const topSlug = cardSet.reduce((a,b) => (b.count ?? -1) > (a.count ?? -1) ? b : a).slug;
 document.getElementById("cards").innerHTML = cardSet.map(t => `
   <article class="card" data-slug="${t.slug}">
-    <div class="ph${t.img ? " has" : ""}">${t.img ? `<img src="${t.img}" alt="${t.name} on YachtWay">` : ""}${t.slug === topSlug ? `<span class="pop">Most popular</span>` : ""}<button type="button" class="pin" aria-pressed="false" data-pin="${t.slug}">Compare</button></div>
+    <div class="ph${t.img ? " has" : ""}">${t.img ? `<img src="${t.img}" alt="${t.name}: ${t.trait.toLowerCase()}">` : ""}${t.slug === topSlug ? `<span class="pop">Most popular</span>` : ""}<button type="button" class="pin" aria-pressed="false" data-pin="${t.slug}">Compare</button></div>
     <div class="card-b">
       <h3>${t.name}</h3>
       <p class="sum">${t.sum}</p>
@@ -910,7 +910,7 @@ function openCompare(){
   body.style.setProperty("--n", set.length);
   let html = `<div class="rl nb"></div>` + set.map(t => `
     <div class="rc nb">
-      <div class="cimg">${t.img ? `<img src="${t.img}" alt="${t.name}">` : `<span>no render yet</span>`}</div>
+      <div class="cimg">${t.img ? `<img src="${t.img}" alt="">` : `<span>no render yet</span>`}</div>
       <p class="cname">${t.name}</p>
     </div>`).join("");
   CMP_ROWS.forEach(([label, get]) => {
