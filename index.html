@@ -307,6 +307,11 @@
   .snote{margin:0;font-size:.75rem;line-height:1.45;color:var(--ink-3);max-width:46ch}
   /* a field that is meant to come from inventory and has not been wired yet
      should look unfinished, not look like a measurement */
+  /* a measured row is labelled as measured at the row, not only in a footnote,
+     because the reader meets the number before they meet the small print */
+  .src{display:inline-block;margin-left:.4rem;font-family:var(--mono);font-size:.5rem;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:3px;padding:.08rem .26rem;vertical-align:1px}
+  .cmpnote{margin:1rem 0 0;padding-top:.8rem;border-top:1px solid var(--line);font-size:.75rem;line-height:1.5;color:var(--ink-3)}
+  .cmpnote b{color:var(--ink-2);font-weight:600}
   .unbound{font-family:var(--mono);font-size:.5625rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);border:1px dashed var(--line-2);border-radius:4px;padding:.1rem .3rem;white-space:nowrap}
 
   .fab{display:none}
@@ -512,10 +517,10 @@
 <div class="modal" id="modal" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cmpTitle">
     <div class="shead">
-      <div><h2 id="cmpTitle">Side by side</h2><p class="sub" style="margin:0">Same figures as the table, one column each</p></div>
+      <div><h2 id="cmpTitle">Side by side</h2><p class="sub" style="margin:0">One column each, plus figures the table does not carry</p></div>
       <button type="button" class="sclose" id="closeCmp">Close</button>
     </div>
-    <div class="cmpwrap"><div class="cmp" id="cmpBody"></div></div>
+    <div class="cmpwrap"><div class="cmp" id="cmpBody"></div><p class="cmpnote" id="cmpNote" hidden></p></div>
     <div class="sfoot" id="cmpFoot"></div>
   </div>
 </div>
@@ -900,9 +905,9 @@ const CMP_ROWS = [
   ["Defining trait", t => t.trait],
   ["Sleeps aboard",  t => t.sleep],
   ["Carries",        t => "up to " + t.pax],
-  ["Cabins, average",      t => avg(t, "cabins", "")],
-  ["Cruise speed, average", t => avg(t, "cruise", " kn")],
-  ["Top speed, average",    t => avg(t, "top", " kn")],
+  ["Cabins, average",       t => avg(t, "cabins", ""),    true],
+  ["Cruise speed, average", t => avg(t, "cruise", " kn"), true],
+  ["Top speed, average",    t => avg(t, "top", " kn"),    true],
   ["Typical length", t => `${t.lo}\u2013${t.hi} ft`],
   ["From",           t => fmtK(t.price)],
   ["Listings",       t => t.count ?? "\u2014"]
@@ -953,15 +958,35 @@ function openCompare(){
       <div class="cimg">${t.img ? `<img src="${t.img}" alt="">` : `<span>no render yet</span>`}</div>
       <p class="cname">${t.name}</p>
     </div>`).join("");
-  CMP_ROWS.forEach(([label, get]) => {
-    html += `<div class="rl">${label}</div>` + set.map(t => `<div class="rc">${get(t)}</div>`).join("");
+  CMP_ROWS.forEach(([label, get, measured]) => {
+    html += `<div class="rl">${label}${measured ? `<span class="src" title="Averaged from YachtWay listings">YW avg</span>` : ""}</div>`
+          + set.map(t => `<div class="rc">${get(t)}</div>`).join("");
   });
   html += `<div class="rl"></div>` + set.map(t => `<div class="rc"><a class="cbrowse" href="#">Browse <span class="bn">${t.name} </span>\u2192</a></div>`).join("");
   body.innerHTML = html;
+  drawCmpNote(set);
   drawCmpFoot(set);
   document.getElementById("modal").hidden = false;
   document.getElementById("closeCmp").focus();
 }
+/* Where a number came from is part of the number. These three are averages of
+   what is listed on YachtWay right now, not manufacturer specifications, and a
+   buyer who reads 24 knots as a spec and finds 19 on the water blames the site.
+   Sample size is named too: Classic sits at twenty listings, where one unusual
+   boat moves the mean visibly. */
+function drawCmpNote(set){
+  const el = document.getElementById("cmpNote");
+  const thin = set.filter(t => t.count != null && t.count < 60).map(t => t.name);
+  const listed = set.filter(t => t.count != null);
+  el.hidden = false;
+  el.innerHTML = `<b>YW avg</b> figures are averaged across the live YachtWay listings in each type \u2014 not manufacturer specifications, and not a guarantee for any one boat. `
+    + `They move as inventory turns over`
+    + (thin.length ? `, and ${nameList(thin)} ${thin.length === 1 ? "carries" : "carry"} few enough listings that a single unusual boat shifts the average` : ``)
+    + `.`
+    + (listed.length < set.length ? ` Types with no listings yet have nothing to average.` : ``)
+    + ` Not wired to inventory in this prototype.`;
+}
+
 /* "and 3 more" reads worse than a written list at these lengths */
 function nameList(set){
   const n = set.map(t => t.name);
@@ -979,14 +1004,13 @@ function drawCmpFoot(set){
   /* A multi-type browse is a filter combination, so the real URL is
      noindex,follow by the crawl rules and never a canonical destination. */
   const href = "/boats-for-sale/?type=" + set.map(t => t.slug).join(",");
-  const unbound = set.some(t => !MEASURED[t.slug]);
   const note = priced.length === 0
     ? `${nameList(set)} are not built yet, so there is nothing to browse together.`
     : `Up to ${ceiling.toLocaleString()} listings across ${nameList(priced)}. A boat that is more than one of these is counted once in the catalog, so the real number is lower.`
       + (missing ? ` ${missing === 1 ? "One type has" : missing + " types have"} no inventory yet and ${missing === 1 ? "is" : "are"} left out.` : "");
   document.getElementById("cmpFoot").innerHTML =
     (priced.length ? `<a class="sall" href="${href}">See all boats for sale in these ${set.length} types <span>\u2192</span></a>` : "")
-    + `<p class="snote">${note}${unbound ? " Cabins and speeds are averages over live listings and are not wired to inventory in this prototype." : ""}</p>`;
+    + `<p class="snote">${note}</p>`;
 }
 
 function closeCompare(){ document.getElementById("modal").hidden = true; }
