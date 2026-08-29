@@ -134,6 +134,7 @@
   .pname{font-family:var(--display);font-weight:400;font-size:18px;line-height:28px;color:var(--ink)}
   .pname::after{content:"";display:inline-block;width:.7rem;height:.7rem;margin-left:.5rem;border-radius:50%;border:1.5px solid var(--line-2);vertical-align:-1px}
   .parent .n{font-size:.8125rem;color:var(--ink-2);font-variant-numeric:tabular-nums;margin:0}
+.pcount{display:block;font-size:.75rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
   .parent.on{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
   .parent.on .pname::after{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 2px var(--n-base-white)}
   .plink{display:inline-block;padding:0 1.1rem 1rem;font-size:.8125rem;font-weight:600;color:var(--brand);text-decoration:none}
@@ -159,6 +160,11 @@
   .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.1rem}
   .chip{border:1px solid var(--line-2);background:var(--surface);color:var(--ink);border-radius:999px;padding:.42rem .85rem;font-size:.8125rem;cursor:pointer}
   .chip:hover{border-color:var(--brand);color:var(--brand)}
+.chip.gone{display:none}
+.chip .cn{margin-left:.35rem;opacity:.5;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"] .cn{opacity:.85}
+.flabel.gone,.fgroup.gone{display:none}
+.ptoggle[aria-disabled="true"]{opacity:.4;cursor:not-allowed}
   .chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#FFFFFF;font-weight:600}
   .result{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.875rem;color:var(--ink-2);border-top:1px solid var(--line);padding-top:.9rem;margin:0}
   .result b{color:var(--ink);font-variant-numeric:tabular-nums}
@@ -405,14 +411,14 @@
       <div class="parent" data-cat="Power">
         <button type="button" class="ptoggle" aria-pressed="false">
           <span class="ptile" data-img="flybridge"></span>
-          <span class="pbody"><span class="pname">Motor Yachts</span><span class="n">3,315 · 12 types</span></span>
+          <span class="pbody"><span class="pname">Motor Yachts</span><span class="n">3,315 · 12 types</span><span class="pcount"></span></span>
         </button>
         <a class="plink" href="#">Browse all 3,315 motor yachts &rarr;</a>
       </div>
       <div class="parent" data-cat="Sail">
         <button type="button" class="ptoggle" aria-pressed="false">
           <span class="ptile" data-img="catamarans"></span>
-          <span class="pbody"><span class="pname">Sailing Yachts</span><span class="n">551 · 4 types</span></span>
+          <span class="pbody"><span class="pname">Sailing Yachts</span><span class="n">551 · 4 types</span><span class="pcount"></span></span>
         </button>
         <a class="plink" href="#">Browse all 551 sailing yachts &rarr;</a>
       </div>
@@ -422,7 +428,7 @@
   <div class="work">
   <section class="rail">
     <div class="narrow">
-      <p class="flabel"><i>1</i> What will you use it for</p>
+      <p class="flabel" id="qActs"><i>1</i> What will you use it for</p>
       <div id="acts">
         <div class="chipgroup">
           <span class="gl">Power</span>
@@ -446,19 +452,19 @@
           </div>
         </div>
       </div>
-      <p class="flabel"><i>2</i> Will you sleep onboard</p>
+      <p class="flabel" id="qSleeps"><i>2</i> Will you sleep onboard</p>
       <div class="chips" id="sleeps">
         <button class="chip" aria-pressed="false" data-sleep="over">Yes, overnight or longer</button>
         <button class="chip" aria-pressed="false" data-sleep="day">No, day trips</button>
       </div>
-      <p class="flabel"><i>3</i> How many people are coming</p>
+      <p class="flabel" id="qPaxs"><i>3</i> How many people are coming</p>
       <div class="chips" id="paxs">
         <button class="chip" aria-pressed="false" data-pax="4">Up to 4</button>
         <button class="chip" aria-pressed="false" data-pax="8">5 to 8</button>
         <button class="chip" aria-pressed="false" data-pax="12">9 to 12</button>
         <button class="chip" aria-pressed="false" data-pax="16">More than 12</button>
       </div>
-      <p class="flabel opt"><i>4</i> Roughly this size <em>optional</em></p>
+      <p class="flabel opt" id="qSizes"><i>4</i> Roughly this size <em>optional</em></p>
       <div class="chips" id="sizes">
         <button class="chip" aria-pressed="false" data-min="0" data-max="40">Under 40 ft</button>
         <button class="chip" aria-pressed="false" data-min="40" data-max="70">40 to 70 ft</button>
@@ -772,13 +778,20 @@ document.querySelectorAll("#tbl thead th").forEach(th => {
 let act = null, size = null, sleep = null, pax = null, cat = null;
 /* "Varies" answers both ways on purpose. A 24-foot center console has no berth
    and a 39-foot one does, and the type name does not tell you which. */
-const okSleep = t => !sleep || (sleep === "over" ? t.sleep !== "No" : t.sleep !== "Yes");
-const matches = t =>
-  (!cat || t.cat === cat) &&
-  (!act || t.acts.includes(act)) &&
-  (!size || (t.lo <= size.max && t.hi >= size.min)) &&
-  okSleep(t) &&
-  (!pax || t.pax >= pax);
+const okSleep = (t, s) => !s || (s === "over" ? t.sleep !== "No" : t.sleep !== "Yes");
+const hit = (t, s) =>
+  (!s.cat || t.cat === s.cat) &&
+  (!s.act || t.acts.includes(s.act)) &&
+  (!s.size || (t.lo <= s.size.max && t.hi >= s.size.min)) &&
+  okSleep(t, s.sleep) &&
+  (!s.pax || t.pax >= s.pax);
+const now = () => ({act, size, sleep, pax, cat});
+const matches = t => hit(t, now());
+/* What one more answer would return, without applying it. */
+const countWith = over => {
+  const s = Object.assign(now(), over);
+  return cardSet.reduce((k, t) => k + (hit(t, s) ? 1 : 0), 0);
+};
 function applyFilter(){
   let n = 0;
   cardSet.forEach(t => { if (matches(t)) n++; });
@@ -808,6 +821,47 @@ function applyFilter(){
     g.classList.toggle("off", !!cat && (cat === "Sail") !== isSail);
   });
   document.getElementById("acts").classList.toggle("single", !!cat);
+
+  /* Every answer carries what it would return, and an answer that would return
+     nothing leaves the rail. Without this the five controls reach 1,500 states,
+     491 of them empty, and "Speed" plus "70 ft and up" is an empty page in two
+     clicks with nothing to warn you. Same rule the cards follow: filtering
+     removes rather than dimming. */
+  const paint = (sel, key, val) => {
+    let live = 0;
+    document.querySelectorAll(sel).forEach(b => {
+      const on = b.getAttribute("aria-pressed") === "true";
+      const k = countWith({[key]: val(b)});
+      let c = b.querySelector(".cn");
+      if (!c) { c = document.createElement("span"); c.className = "cn"; b.appendChild(c); }
+      c.textContent = k;
+      b.classList.toggle("gone", k === 0 && !on);
+      if (k > 0 || on) live++;
+    });
+    return live;
+  };
+  const liveActs   = paint("#acts .chip",   "act",   b => b.dataset.act);
+  const liveSleeps = paint("#sleeps .chip", "sleep", b => b.dataset.sleep);
+  const livePaxs   = paint("#paxs .chip",   "pax",   b => +b.dataset.pax);
+  const liveSizes  = paint("#sizes .chip",  "size",  b => ({min:+b.dataset.min, max:+b.dataset.max}));
+  /* a question with no answers left is furniture, so it goes too */
+  [["qActs", liveActs], ["qSleeps", liveSleeps], ["qPaxs", livePaxs], ["qSizes", liveSizes]]
+    .forEach(([id, live]) => {
+      const el = document.getElementById(id);
+      el.classList.toggle("gone", live === 0);
+      el.nextElementSibling.classList.toggle("gone", live === 0);
+    });
+
+  /* The two parent tiles get the same treatment, but they are disabled rather
+     than removed: each one holds the hub's only link to a parent catalog. */
+  document.querySelectorAll("#parents .parent").forEach(p => {
+    const btn = p.querySelector(".ptoggle");
+    const k = countWith({cat: p.dataset.cat, act: null});
+    const on = btn.getAttribute("aria-pressed") === "true";
+    btn.setAttribute("aria-disabled", String(k === 0 && !on));
+    const c = p.querySelector(".pcount");
+    if (c) c.textContent = k === 0 ? "no match" : k + (k === 1 ? " type matches" : " types match");
+  });
 }
 function bindChips(id, read){
   document.getElementById(id).addEventListener("click", e => {
@@ -839,6 +893,7 @@ bindChips("sizes", b => { size = b ? {min:+b.dataset.min, max:+b.dataset.max} : 
    catalog. Both anchors stay in the HTML, so the internal links are unchanged. */
 document.getElementById("parents").addEventListener("click", e => {
   const btn = e.target.closest(".ptoggle"); if (!btn) return;
+  if (btn.getAttribute("aria-disabled") === "true") return;
   const card = btn.closest(".parent");
   const on = card.classList.contains("on");
   document.querySelectorAll("#parents .parent").forEach(c => {
