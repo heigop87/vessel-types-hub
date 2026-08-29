@@ -399,9 +399,21 @@
    so the rail stops being the tallest thing on the page. */
 .work{display:block}
 .rail{position:static;max-height:none;overflow:visible;margin:0 0 1.5rem}
-.rail .narrow{display:grid;gap:1rem 1.5rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.25rem}
-.rail .flabel{margin-bottom:.45rem}
-.rail .chips{margin-bottom:0}
+/* Label on the left, answers flowing across the full width on the right. Four
+   short rows. In a column each question stacked into a tower, which is the tall
+   rail again in a different place. */
+.rail .narrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.5rem 1.1rem;align-items:start;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:.95rem 1.15rem}
+.rail .flabel{margin:0;padding-top:.4rem;white-space:nowrap}
+.rail .chips{margin:0}
+#acts{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem}
+#acts .chipgroup{display:flex;align-items:center;gap:.45rem;margin:0;grid-template-columns:none}
+#acts .chipgroup .gl{padding:0}
+@media (max-width:52rem){
+  .rail .narrow{grid-template-columns:1fr;gap:.3rem}
+  .rail .flabel{padding-top:.7rem}
+  #acts{gap:.4rem}
+  #acts .chipgroup{flex-wrap:wrap}
+}
 .qnote,.result{grid-column:1/-1;margin:0}
 .qnote{font-size:.8125rem;color:var(--ink-2)}
 .grouphead{grid-column:1/-1;margin:0 0 .1rem;font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
@@ -447,7 +459,7 @@
   <div class="work">
   <section class="rail">
     <div class="narrow">
-      <p class="flabel" id="qActs"><i>1</i> What will you use it for</p>
+      <p class="flabel" id="qActs">Use</p>
       <div id="acts">
         <div class="chipgroup">
           <span class="gl">Power</span>
@@ -471,19 +483,19 @@
           </div>
         </div>
       </div>
-      <p class="flabel" id="qSleeps"><i>2</i> Will you sleep onboard</p>
+      <p class="flabel" id="qSleeps">Sleeping</p>
       <div class="chips" id="sleeps">
         <button class="chip" aria-pressed="false" data-sleep="over">Yes, overnight or longer</button>
         <button class="chip" aria-pressed="false" data-sleep="day">No, day trips</button>
       </div>
-      <p class="flabel" id="qPaxs"><i>3</i> How many people are coming</p>
+      <p class="flabel" id="qPaxs">People</p>
       <div class="chips" id="paxs">
         <button class="chip" aria-pressed="false" data-pax="4">Up to 4</button>
         <button class="chip" aria-pressed="false" data-pax="8">5 to 8</button>
         <button class="chip" aria-pressed="false" data-pax="12">9 to 12</button>
         <button class="chip" aria-pressed="false" data-pax="16">More than 12</button>
       </div>
-      <p class="flabel opt" id="qSizes"><i>4</i> Roughly this size <em>optional</em></p>
+      <p class="flabel opt" id="qSizes">Size <em>optional</em></p>
       <div class="chips" id="sizes">
         <button class="chip" aria-pressed="false" data-min="0" data-max="40">Under 40 ft</button>
         <button class="chip" aria-pressed="false" data-min="40" data-max="70">40 to 70 ft</button>
