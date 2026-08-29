@@ -424,6 +424,54 @@
 .tsortl{font-size:.8125rem;color:var(--ink-2);display:flex;align-items:center;gap:.4rem;white-space:nowrap}
 .tsortl select{font:inherit;font-size:.8125rem;color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:.35rem .5rem}
 @media (min-width:64rem){.work{display:block}.rail{position:static;max-height:none;top:auto}}
+
+/* ---- surface pass ---------------------------------------------------------
+   Structure is unchanged. This is weight, depth and motion only. */
+
+/* Headings carry the page instead of sitting flush with the body text. */
+h2{font-size:26px;line-height:33px;letter-spacing:-.02em;margin-bottom:.35rem}
+.hero h1{letter-spacing:-.025em}
+.sub{font-size:.875rem;color:var(--ink-2);margin-bottom:1.4rem;max-width:58ch}
+section h2::after{content:"";display:block;width:2.25rem;height:2px;
+  background:var(--brand);border-radius:2px;margin-top:.55rem;opacity:.85}
+
+/* The question band loses its grey box and sits on the page. */
+.rail .narrow{background:none;border:0;border-radius:0;padding:.2rem 0 1rem;
+  border-bottom:1px solid var(--line)}
+.rail .flabel{color:var(--ink-2);font-weight:700}
+.chip{transition:transform .12s ease,border-color .12s ease,background .12s ease,color .12s ease}
+.chip:hover{transform:translateY(-1px)}
+.chip[aria-pressed="true"]{box-shadow:0 2px 10px -3px var(--brand)}
+
+/* Cards lift, and the render grows a little inside its frame. */
+.card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,opacity .15s;
+  will-change:transform}
+.card:hover{transform:translateY(-3px);border-color:var(--brand-line);
+  box-shadow:0 14px 30px -18px rgba(34,34,45,.45),0 2px 6px -4px rgba(34,34,45,.3)}
+.ph{overflow:hidden}
+.ph img{transition:transform .35s ease}
+.card:hover .ph img{transform:scale(1.045)}
+.card h3{transition:color .15s ease}
+.card:hover h3{color:var(--brand)}
+
+/* Purple used for emphasis, not only on buttons. */
+.facts b{color:var(--ink)}
+.grouphead{color:var(--brand);font-weight:700}
+.result b,#count b{color:var(--brand)}
+.crumb a:hover{color:var(--brand)}
+
+/* When the order changes the cards settle in rather than snapping. */
+@keyframes settle{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+.cards.moved .card{animation:settle .26s ease both}
+@keyframes tick{0%{transform:translateY(-3px);opacity:.4}100%{transform:none;opacity:1}}
+.result .bump{display:inline-block;animation:tick .22s ease both}
+
+@media (prefers-reduced-motion:reduce){
+  .card,.ph img,.chip{transition:none}
+  .card:hover{transform:none}
+  .card:hover .ph img{transform:none}
+  .cards.moved .card,.result .bump{animation:none}
+}
 </style>
 </head>
 <body>
@@ -877,11 +925,17 @@ function applyFilter(){
   document.getElementById("resSub").textContent = asked
     ? "Ordered by how well each one fits your answers. Every type stays on the page."
     : "A listing can belong to more than one type, so the counts below do not sum to 3,866";
-  document.getElementById("count").innerHTML = !asked
+  const cEl = document.getElementById("count");
+  const before = cEl.textContent;
+  cEl.innerHTML = !asked
     ? `<b>${set.length}</b> types`
     : perfect
       ? `<b>${cut}</b> of ${set.length} types fit all of your answers`
       : `No type fits all ${asked}. The closest fits <b>${top}</b>.`;
+  if (cEl.textContent !== before) {
+    cEl.classList.remove("bump"); void cEl.offsetWidth; cEl.classList.add("bump");
+    cardsEl.classList.remove("moved"); void cardsEl.offsetWidth; cardsEl.classList.add("moved");
+  }
 
   /* an answer nothing satisfies is not a dead end any more, but it should still
      say so rather than quietly counting for nothing */
