@@ -175,7 +175,7 @@
   .card:hover{border-color:var(--brand-line)}
   .card.dim,.lrow.dim,.lgroup.dim,tbody tr.dim{display:none}
   .ph{aspect-ratio:16/9;background:linear-gradient(135deg,var(--surface-2) 0%,var(--brand-soft) 100%);position:relative}
-  .ph::after{content:"photo";position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);opacity:.5}
+  .ph::after{content:"Photo to come";position:absolute;inset:0;display:grid;place-items:center;font-size:.75rem;letter-spacing:0;text-transform:uppercase;color:var(--ink-3);opacity:.5}
   .ph.has{background:#FFFFFF}
   .ph.has::after{content:none}
   .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
@@ -393,6 +393,25 @@
     .fab button:hover,.fab select:hover{border-color:var(--brand);color:var(--brand)}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Sixteen types is a list you can read, not an inventory to filter. The
+   questions move above the results and reorder them instead of removing them,
+   so the rail stops being the tallest thing on the page. */
+.work{display:block}
+.rail{position:static;max-height:none;overflow:visible;margin:0 0 1.5rem}
+.rail .narrow{display:grid;gap:1rem 1.5rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.25rem}
+.rail .flabel{margin-bottom:.45rem}
+.rail .chips{margin-bottom:0}
+.qnote,.result{grid-column:1/-1;margin:0}
+.qnote{font-size:.8125rem;color:var(--ink-2)}
+.grouphead{grid-column:1/-1;margin:0 0 .1rem;font-size:.6875rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.grouphead.rest{margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--line)}
+.tbc{color:var(--ink-3);font-style:italic}
+.pin.full{opacity:.4;cursor:not-allowed}
+.dcap{font-size:.75rem;color:var(--ink-3);white-space:nowrap}
+.tsortl{font-size:.8125rem;color:var(--ink-2);display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.tsortl select{font:inherit;font-size:.8125rem;color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:.35rem .5rem}
+@media (min-width:64rem){.work{display:block}.rail{position:static;max-height:none;top:auto}}
 </style>
 </head>
 <body>
@@ -405,8 +424,8 @@
     <p class="crumb"><a href="/">Home</a> &nbsp;›&nbsp; <span>Vessel Types</span></p>
     <h1>Types of Yachts</h1>
     <p class="deck"><strong>3,866</strong> listings across <strong id="typeCount">16</strong> types</p>
-    <p class="lede">Type names overlap: the same 43-foot boat is honestly a walkaround, a day boat and a center console. This page sorts them by the decision you are making \u2014 how you will use the boat, how big it needs to be, and what it costs.</p>
-    <p class="eyebrow">Start broad — pick one to narrow this page</p>
+    <p class="lede">Type names overlap: the same 43-foot boat is a walkaround, a day boat and a center console. This page sorts them by the decision you are making: how you will use the boat, how big it needs to be, and what it costs.</p>
+    <p class="eyebrow">Power or sail</p>
     <div class="parents" id="parents">
       <div class="parent" data-cat="Power">
         <button type="button" class="ptoggle" aria-pressed="false">
@@ -470,16 +489,16 @@
         <button class="chip" aria-pressed="false" data-min="40" data-max="70">40 to 70 ft</button>
         <button class="chip" aria-pressed="false" data-min="70" data-max="999">70 ft and up</button>
       </div>
+      <p class="qnote" id="qnote" hidden></p>
       <p class="result"><span id="count"><b>16</b> of 16 types match</span> <button class="clear" id="clear" hidden>Clear</button></p>
     </div>
   </section>
 
   <section class="results">
     <div>
-      <h2>All types</h2>
-      <p class="sub">A listing can belong to more than one type, so the counts below do not sum to 3,866</p>
+      <h2 id="resH">All 16 types</h2>
+      <p class="sub" id="resSub">A listing can belong to more than one type, so the counts below do not sum to 3,866</p>
       <div class="cards" id="cards"></div>
-      <p class="empty" id="none" hidden><b>Nothing fits all of that</b>No type in the catalog matches every answer at once. <button type="button" id="clear2">Start again</button></p>
     </div>
   </section>
   </div>
@@ -495,7 +514,16 @@
   <section id="secTable">
     <div>
       <div class="tbar">
-        <div><h2>Compare every type</h2><p class="sub" style="margin:0">Click any column to sort</p></div>
+        <div><h2>Compare every type</h2><p class="sub" style="margin:0">Sort by any column, or use the menu</p></div>
+        <label class="tsortl">Sort by
+          <select id="tsort">
+            <option value="count">Most listings</option>
+            <option value="price">Lowest price</option>
+            <option value="lo">Smallest first</option>
+            <option value="pax">Carries most</option>
+            <option value="name">Name</option>
+          </select>
+        </label>
       </div>
       <p class="cost"><span>&#9881;</span><span><b>Running costs do not follow the type.</b> What a boat costs to own comes down to its length, its engines, and where you keep it. <a href="#">Work out the cost of owning one &rarr;</a></span></p>
       <div class="twrap">
@@ -524,6 +552,7 @@
 <div class="drawer" id="drawer" hidden>
   <span class="dlab">Comparing</span>
   <div class="dchips" id="dchips"></div>
+  <span class="dcap" id="dcap"></span>
   <button type="button" class="dbtn" id="openCmp">Pick one more</button>
   <button type="button" class="dclear" id="clearPins">Clear</button>
 </div>
@@ -539,16 +568,6 @@
   </div>
 </div>
 
-<div class="fab" id="fab">
-  <button type="button" id="fabFilter">Filter</button>
-  <select id="fabSort" aria-label="Sort the comparison table">
-    <option value="count">Sort: Most listings</option>
-    <option value="price">Sort: Lowest price</option>
-    <option value="lo">Sort: Smallest first</option>
-    <option value="pax">Sort: Carries most</option>
-    <option value="name">Sort: Name</option>
-  </select>
-</div>
 
 <script>
 const T = [
@@ -695,7 +714,7 @@ document.getElementById("cards").innerHTML = cardSet.map(t => `
     <div class="card-b">
       <h3>${t.name}</h3>
       <p class="sum">${t.sum}</p>
-      <p class="facts">${t.count != null ? `<b>${t.count}</b> listings <i>·</i> from <b>${fmtK(t.price)}</b> <i>·</i> ` : ``}${t.lo}–${t.hi} ft</p>
+      <p class="facts">${t.count != null ? `<b>${t.count}</b> listings <i>·</i> from <b>${fmtK(t.price)}</b> <i>·</i> ` : `<span class="tbc">count and price to come</span> <i>·</i> `}${t.lo}–${t.hi} ft</p>
       <div class="ctas">
         <a href="#" title="Browse ${t.name} listings">Browse &rarr;</a>
         <button type="button" class="alert" aria-pressed="false" data-name="${t.name}">Alert me</button>
@@ -704,7 +723,7 @@ document.getElementById("cards").innerHTML = cardSet.map(t => `
   </article>`).join("");
 
 /* ladder */
-const MAX = 130;
+const MAX = Math.max(...cardSet.map(t => t.hi));
 function drawLadder(){
   const set = cardSet.slice().sort((a,b) => a.lo - b.lo);
   const row = t => {
@@ -726,7 +745,7 @@ function drawLadder(){
       return g.length ? `<details class="lgroup" open><summary>${label} · <span class="gcount">${g.length}</span></summary>${g.map(row).join("")}</details>` : "";
     }).join("") +
     `<div class="axis"><span></span><span class="ticks">
-      ${[0,25,50,75,100,130].map(v => `<span class="tick" style="left:${(v/MAX)*100}%">${v}</span>`).join("")}
+      ${Array.from({length: Math.floor(MAX / 50) + 1}, (_, i) => i * 50).concat(MAX).map(v => `<span class="tick" style="left:${(v/MAX)*100}%">${v}</span>`).join("")}
     </span></div>`;
 }
 
@@ -774,94 +793,87 @@ document.querySelectorAll("#tbl thead th").forEach(th => {
   });
 });
 
-/* filter */
-let act = null, size = null, sleep = null, pax = null, cat = null;
-/* "Varies" answers both ways on purpose. A 24-foot center console has no berth
-   and a 39-foot one does, and the type name does not tell you which. */
+/* Answers rank, they do not remove. Sixteen types is a list a buyer can read,
+   so filtering it was the wrong pattern: every AND narrowed the set toward
+   nothing, and a near miss vanished instead of staying in view. Now every type
+   stays on the page and the ones that fit move to the front. Power or sail is
+   the one hard fork, because it is a real choice rather than a preference. */
+let acts = [], size = null, sleep = null, pax = null, cat = null;
 const okSleep = (t, s) => !s || (s === "over" ? t.sleep !== "No" : t.sleep !== "Yes");
-const hit = (t, s) =>
-  (!s.cat || t.cat === s.cat) &&
-  (!s.act || t.acts.includes(s.act)) &&
-  (!s.size || (t.lo <= s.size.max && t.hi >= s.size.min)) &&
-  okSleep(t, s.sleep) &&
-  (!s.pax || t.pax >= s.pax);
-const now = () => ({act, size, sleep, pax, cat});
-const matches = t => hit(t, now());
-/* What one more answer would return, without applying it. */
-const countWith = over => {
-  const s = Object.assign(now(), over);
-  return cardSet.reduce((k, t) => k + (hit(t, s) ? 1 : 0), 0);
+const answers = () => [
+  acts.length ? t => acts.some(a => t.acts.includes(a)) : null,
+  size        ? t => t.lo <= size.max && t.hi >= size.min : null,
+  sleep       ? t => okSleep(t, sleep) : null,
+  pax         ? t => t.pax >= pax : null
+].filter(Boolean);
+const inFamily = t => !cat || t.cat === cat;
+
+/* chip label lookup, read off the markup so the two never drift apart */
+const USE = {};
+document.querySelectorAll("#acts .chip").forEach(b => { USE[b.dataset.act] = b.textContent.trim(); });
+
+const gh = (id, cls) => {
+  const el = document.createElement("p");
+  el.className = "grouphead" + (cls ? " " + cls : "");
+  el.id = id; el.hidden = true;
+  return el;
 };
+const ghBest = gh("ghBest"), ghRest = gh("ghRest", "rest");
+const cardsEl = document.getElementById("cards");
+cardsEl.prepend(ghRest); cardsEl.prepend(ghBest);
+
 function applyFilter(){
-  let n = 0;
-  cardSet.forEach(t => { if (matches(t)) n++; });
+  const qs = answers(), asked = qs.length;
+  const set = cardSet.filter(inFamily);
+  const scored = set
+    .map(t => ({t, s: qs.reduce((k, q) => k + (q(t) ? 1 : 0), 0)}))
+    .sort((a, b) => b.s - a.s || (b.t.count ?? -1) - (a.t.count ?? -1));
+  const top = scored.length ? scored[0].s : 0;
+
+  /* the family fork is the only thing that removes anything */
   T.forEach(t => {
-    const ok = matches(t);
-    document.querySelectorAll(`[data-slug="${t.slug}"]`).forEach(el => el.classList.toggle("dim", !ok));
-  });
-  document.getElementById("count").innerHTML = `<b>${n}</b> of ${cardSet.length} types match`;
-
-  /* a ladder group with nothing left in it goes too, and the groups that stay
-     count what is on screen rather than what was there before filtering */
-  document.querySelectorAll(".lgroup").forEach(g => {
-    const shown = g.querySelectorAll(".lrow:not(.dim)").length;
-    g.classList.toggle("dim", shown === 0);
-    const c = g.querySelector(".gcount"); if (c) c.textContent = shown;
+    const out = !inFamily(t);
+    document.querySelectorAll(`[data-slug="${t.slug}"]`).forEach(el => el.classList.toggle("dim", out));
   });
 
-  /* nothing matches: say so once, and drop the two sections that would
-     otherwise render as empty furniture */
-  document.getElementById("none").hidden = n > 0;
-  document.getElementById("secLadder").hidden = n === 0;
-  document.getElementById("secTable").hidden = n === 0;
-  document.getElementById("clear").hidden = !(act || size || sleep || pax || cat);
-  /* the use row for the other family is not just irrelevant, it is unreachable */
-  document.querySelectorAll(".chipgroup").forEach(g => {
-    const isSail = !!g.querySelector('[data-act^="Sail"]');
-    g.classList.toggle("off", !!cat && (cat === "Sail") !== isSail);
+  /* cards stay where they are in the DOM and move with grid order, so a pin or
+     an alert the buyer has already set survives every answer */
+  const cut = asked ? scored.filter(x => x.s === top).length : 0;
+  scored.forEach((x, i) => {
+    const el = cardsEl.querySelector(`.card[data-slug="${x.t.slug}"]`);
+    if (el) el.style.order = (i < cut ? i + 1 : i + 3);
   });
+  ghBest.style.order = 0;
+  ghRest.style.order = cut + 2;
+  ghBest.hidden = !asked;
+  ghRest.hidden = !asked || cut >= scored.length;
+  if (asked) {
+    ghBest.textContent = top === asked
+      ? "Best fit for you"
+      : `Closest so far, matching ${top} of your ${asked} answers`;
+    ghRest.textContent = "Also worth a look";
+  }
+
+  const fam = cat === "Power" ? "motor " : cat === "Sail" ? "sailing " : "";
+  document.getElementById("resH").textContent = `All ${set.length} ${fam}types`;
+  document.getElementById("resSub").textContent = asked
+    ? "Ordered by how well each one fits your answers. Every type stays on the page."
+    : "A listing can belong to more than one type, so the counts below do not sum to 3,866";
+  document.getElementById("count").innerHTML = asked
+    ? `<b>${cut}</b> of ${set.length} types fit ${top === asked ? "all" : top} of your answers`
+    : `<b>${set.length}</b> types`;
+
+  /* an answer nothing satisfies is not a dead end any more, but it should still
+     say so rather than quietly counting for nothing */
+  const dead = acts.filter(a => !set.some(t => t.acts.includes(a)));
+  const note = document.getElementById("qnote");
+  note.hidden = !dead.length;
+  if (dead.length) {
+    note.textContent = `No ${fam || ""}type is set up for ${dead.map(a => USE[a].toLowerCase()).join(" or ")}, so that answer is not changing the order.`;
+  }
+
+  document.getElementById("clear").hidden = !(acts.length || size || sleep || pax || cat);
   document.getElementById("acts").classList.toggle("single", !!cat);
-
-  /* Every answer carries what it would return, and an answer that would return
-     nothing leaves the rail. Without this the five controls reach 1,500 states,
-     491 of them empty, and "Speed" plus "70 ft and up" is an empty page in two
-     clicks with nothing to warn you. Same rule the cards follow: filtering
-     removes rather than dimming. */
-  const paint = (sel, key, val) => {
-    let live = 0;
-    document.querySelectorAll(sel).forEach(b => {
-      const on = b.getAttribute("aria-pressed") === "true";
-      const k = countWith({[key]: val(b)});
-      let c = b.querySelector(".cn");
-      if (!c) { c = document.createElement("span"); c.className = "cn"; b.appendChild(c); }
-      c.textContent = k;
-      b.classList.toggle("gone", k === 0 && !on);
-      if (k > 0 || on) live++;
-    });
-    return live;
-  };
-  const liveActs   = paint("#acts .chip",   "act",   b => b.dataset.act);
-  const liveSleeps = paint("#sleeps .chip", "sleep", b => b.dataset.sleep);
-  const livePaxs   = paint("#paxs .chip",   "pax",   b => +b.dataset.pax);
-  const liveSizes  = paint("#sizes .chip",  "size",  b => ({min:+b.dataset.min, max:+b.dataset.max}));
-  /* a question with no answers left is furniture, so it goes too */
-  [["qActs", liveActs], ["qSleeps", liveSleeps], ["qPaxs", livePaxs], ["qSizes", liveSizes]]
-    .forEach(([id, live]) => {
-      const el = document.getElementById(id);
-      el.classList.toggle("gone", live === 0);
-      el.nextElementSibling.classList.toggle("gone", live === 0);
-    });
-
-  /* The two parent tiles get the same treatment, but they are disabled rather
-     than removed: each one holds the hub's only link to a parent catalog. */
-  document.querySelectorAll("#parents .parent").forEach(p => {
-    const btn = p.querySelector(".ptoggle");
-    const k = countWith({cat: p.dataset.cat, act: null});
-    const on = btn.getAttribute("aria-pressed") === "true";
-    btn.setAttribute("aria-disabled", String(k === 0 && !on));
-    const c = p.querySelector(".pcount");
-    if (c) c.textContent = k === 0 ? "no match" : k + (k === 1 ? " type matches" : " types match");
-  });
 }
 function bindChips(id, read){
   document.getElementById(id).addEventListener("click", e => {
@@ -885,7 +897,17 @@ function revealResults(){
   }
 }
 
-bindChips("acts", b => { act = b ? b.dataset.act : null; });
+/* Use is the one question a buyer has more than one answer to. It looked
+   multi-select and behaved as a radio group, so a second answer silently
+   deleted the first. Now it is what it looks like. */
+document.getElementById("acts").addEventListener("click", e => {
+  const b = e.target.closest("button.chip"); if (!b) return;
+  const on = b.getAttribute("aria-pressed") === "true";
+  b.setAttribute("aria-pressed", String(!on));
+  const a = b.dataset.act;
+  if (on) acts.splice(acts.indexOf(a), 1); else acts.push(a);
+  applyFilter();
+});
 bindChips("sleeps", b => { sleep = b ? b.dataset.sleep : null; });
 bindChips("paxs", b => { pax = b ? +b.dataset.pax : null; });
 bindChips("sizes", b => { size = b ? {min:+b.dataset.min, max:+b.dataset.max} : null; });
@@ -902,17 +924,11 @@ document.getElementById("parents").addEventListener("click", e => {
   });
   cat = on ? null : card.dataset.cat;
   if (!on) { card.classList.add("on"); btn.setAttribute("aria-pressed", "true"); }
-  /* a use from the other family cannot survive the switch */
-  if (cat && act && (cat === "Sail") !== act.startsWith("Sail")) {
-    act = null;
-    document.querySelectorAll("#acts .chip").forEach(c => c.setAttribute("aria-pressed", "false"));
-  }
   applyFilter();
 });
 
-document.getElementById("clear2").addEventListener("click", () => document.getElementById("clear").click());
 document.getElementById("clear").addEventListener("click", () => {
-  act = null; size = null; sleep = null; pax = null; cat = null;
+  acts = []; size = null; sleep = null; pax = null; cat = null;
   document.querySelectorAll("#parents .parent").forEach(c => {
     c.classList.remove("on");
     c.querySelector(".ptoggle").setAttribute("aria-pressed", "false");
@@ -969,7 +985,7 @@ const MEASURED = {};   /* {slug: {cabins:{median,n}, cruise:{p25,p75,n}, top:{p2
    interquartile range, which states the spread instead of hiding it. */
 const stat = (t, k, unit) => {
   const v = MEASURED[t.slug] && MEASURED[t.slug][k];
-  if (!v) return `<span class="unbound">from inventory</span>`;
+  if (!v) return `<span class="tbc">not enough listings yet</span>`;
   const body = v.p25 != null ? `${v.p25}\u2013${v.p75}${unit}` : `${v.median}${unit}`;
   return `${body}${v.n ? ` <span class="n-of">n=${v.n}</span>` : ""}`;
 };
@@ -992,7 +1008,10 @@ function renderPins(){
   document.querySelectorAll(".pin").forEach(b => {
     const on = pins.includes(b.dataset.pin);
     b.setAttribute("aria-pressed", String(on));
-    b.classList.toggle("full", !on && pins.length >= 3);
+    const full = !on && pins.length >= 3;
+    b.classList.toggle("full", full);
+    b.setAttribute("aria-disabled", String(full));
+    b.title = full ? "Three types is the limit. Remove one first." : "";
   });
   const drawer = document.getElementById("drawer");
   drawer.hidden = pins.length === 0;
@@ -1003,6 +1022,7 @@ function renderPins(){
   const btn = document.getElementById("openCmp");
   btn.disabled = pins.length < 2;
   btn.textContent = pins.length < 2 ? "Pick one more" : `Compare ${pins.length} types`;
+  document.getElementById("dcap").textContent = pins.length >= 3 ? "Three is the limit. Remove one to swap." : `Pick up to ${3 - pins.length} more.`;
 }
 
 function togglePin(slug){
@@ -1060,7 +1080,7 @@ function drawCmpNote(set){
     + (thin.length ? `, and ${nameList(thin)} ${thin.length === 1 ? "carries" : "carry"} few enough listings that any figure over ${thin.length === 1 ? "it" : "them"} is indicative at best` : ``)
     + `.`
     + (listed.length < set.length ? ` Types with no listings yet have nothing to measure.` : ``)
-    + ` Not wired to inventory in this prototype.`;
+    + ``;
 }
 
 /* "and 3 more" reads worse than a written list at these lengths */
@@ -1106,11 +1126,10 @@ document.addEventListener("keydown", e => {
 });
 renderPins();
 
-/* mobile: one floating control, filter and sort */
-document.getElementById("fabFilter").addEventListener("click", () => {
-  document.querySelector(".narrow").scrollIntoView({behavior:"smooth", block:"start"});
-});
-document.getElementById("fabSort").addEventListener("change", e => {
+/* One sort control, on the table, reachable by keyboard and present at every
+   width. The table headers stay clickable, but they are not the only way in:
+   on a phone the table is stacked cards and has no headers to click. */
+document.getElementById("tsort").addEventListener("change", e => {
   const k = e.target.value;
   const up = ["price","lo","name"].includes(k);
   sortKey = k; asc = up;
