@@ -838,7 +838,11 @@ function applyFilter(){
 
   /* cards stay where they are in the DOM and move with grid order, so a pin or
      an alert the buyer has already set survives every answer */
-  const cut = asked ? scored.filter(x => x.s === top).length : 0;
+  /* Split into two groups only when something actually fits every answer.
+     Otherwise "closest" swells to fourteen of sixteen and means nothing, so
+     the page says plainly that nothing fits and orders by how close each is. */
+  const perfect = asked > 0 && top === asked;
+  const cut = perfect ? scored.filter(x => x.s === top).length : 0;
   scored.forEach((x, i) => {
     const el = cardsEl.querySelector(`.card[data-slug="${x.t.slug}"]`);
     if (el) el.style.order = (i < cut ? i + 1 : i + 3);
@@ -846,11 +850,13 @@ function applyFilter(){
   ghBest.style.order = 0;
   ghRest.style.order = cut + 2;
   ghBest.hidden = !asked;
-  ghRest.hidden = !asked || cut >= scored.length;
+  ghRest.hidden = !perfect || cut >= scored.length;
   if (asked) {
-    ghBest.textContent = top === asked
-      ? "Best fit for you"
-      : `Closest so far, matching ${top} of your ${asked} answers`;
+    ghBest.textContent = perfect
+      ? (cut === 1 ? "Best fit for you" : `Best fit for you, ${cut} types`)
+      : top === 0
+        ? "No type matches that, so the order is unchanged"
+        : `No type matches all ${asked} answers. Closest first.`;
     ghRest.textContent = "Also worth a look";
   }
 
@@ -859,9 +865,11 @@ function applyFilter(){
   document.getElementById("resSub").textContent = asked
     ? "Ordered by how well each one fits your answers. Every type stays on the page."
     : "A listing can belong to more than one type, so the counts below do not sum to 3,866";
-  document.getElementById("count").innerHTML = asked
-    ? `<b>${cut}</b> of ${set.length} types fit ${top === asked ? "all" : top} of your answers`
-    : `<b>${set.length}</b> types`;
+  document.getElementById("count").innerHTML = !asked
+    ? `<b>${set.length}</b> types`
+    : perfect
+      ? `<b>${cut}</b> of ${set.length} types fit all of your answers`
+      : `No type fits all ${asked}. The closest fits <b>${top}</b>.`;
 
   /* an answer nothing satisfies is not a dead end any more, but it should still
      say so rather than quietly counting for nothing */
